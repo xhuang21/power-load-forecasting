@@ -14,6 +14,8 @@ The dataset spans **2006–2010** and is resampled to hourly intervals for consi
 
 - **Household Power Consumption:** UCI Machine Learning Repository  
   Original dataset: `household_power_consumption.txt`
+  UCI Machine Learning Repository:  
+  [https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)
 
 - **Weather Data:** Retrieved from Meteostat API for **Paris**, including:  
   - Temperature (°C)  
@@ -28,30 +30,36 @@ All data is merged and processed into `power_hourly_2006_2010.csv` under the `/d
 
 ```
 power-load-forecasting/
-├── data/                     # Raw and processed datasets
-│   ├── household_power_consumption.txt
-│   ├── meteostat_paris_2006_2010.csv
-│   └── power_hourly_2006_2010.csv
+├power-load-forecasting/
+├── data/ # Raw and processed datasets ⚠️ ignored by .gitignore
+│ ├── household_power_consumption.txt
+│ ├── meteostat_paris_2006_2010.csv
+│ └── power_hourly_2006_2010.csv
 │
-├── results/                  # Generated model results and comparison plots
-│   ├── comparison_plot.png
-│   ├── model_results.csv
-│   ├── predictions_test.csv
-│   ├── test_features.csv
-│   ├── train_features.csv
-│   └── features_full.csv
+├── doc/ # Documentation and final report
+│ └── final_project_report.pdf
 │
-├── src/                      # Source code modules
-│   ├── load.py               # Data loading utilities
-│   ├── process.py            # Data preprocessing & feature engineering
-│   ├── analyze.py            # Model training and evaluation
-│   ├── config.py             # Global configuration
-│   └── main.py               # Main script entry point
+├── results/ # Model results and comparison plots ⚠️ ignored by .gitignore
+│ ├── comparison_plot.png
+│ ├── model_results.csv
+│ ├── predictions_test.csv
+│ ├── test_features.csv
+│ ├── train_features.csv
+│ └── features_full.csv
 │
-├── tests/                    # Unit tests (optional)
-├── requirements.txt          # Dependencies
-├── README.md                 # Project documentation
-└── LICENSE
+├── src/ # Source code modules
+│ ├── load.py # Load and preprocess UCI + Meteostat data
+│ ├── process.py # Feature engineering and dataset creation
+│ ├── analyze.py # Model training and evaluation
+│ ├── config.py # Global configuration
+│ ├── main.py # Main execution entry point
+│ └── tests.py # Basic sanity checks (optional)
+│
+│
+├── .gitignore # Ignore temp files, caches, data/results
+├── requirements.txt # Dependencies
+├── README.md # Project documentation
+└── LICENSE # MIT License
 ```
 
 ---
