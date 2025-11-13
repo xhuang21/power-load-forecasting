@@ -20,8 +20,11 @@ This project uses two external data sources:
 
 The script automatically downloads the dataset from the UCI Machine Learning Repository:
 
-Original source:  
-https://archive.ics.uci.edu/ml/machine-learning-databases/00235/
+Official dataset page:
+https://archive.ics.uci.edu/dataset/235/individual+household+electric+power+consumption
+
+Direct ZIP download link used by the project:
+https://archive.ics.uci.edu/ml/machine-learning-databases/00235/household_power_consumption.zip
 
 The project automatically performs the following steps:
 
