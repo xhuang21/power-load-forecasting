@@ -115,7 +115,7 @@ power-load-forecasting/
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/<your-username>/power-load-forecasting.git
+    git clone https://github.com/<xhuang21>/power-load-forecasting.git
     cd power-load-forecasting
     ```
 
@@ -128,13 +128,13 @@ power-load-forecasting/
 3. **Run preprocessing and feature generation**
 
     ```bash
-    python src/process.py
+    python src/01_main.py
     ```
 
 4. **Train and evaluate all models**
 
     ```bash
-    python src/analyze.py
+    python src/02_analyze.py
     ```
 
 5. **Check results**
