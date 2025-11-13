@@ -11,18 +11,51 @@ The dataset spans **2006–2010** and is resampled to hourly intervals for consi
 ---
 
 ## 🌍 Data Sources
+## 🌍 Data Sources
 
-- **Household Power Consumption:** UCI Machine Learning Repository  
-  Original dataset: `household_power_consumption.txt`
-  UCI Machine Learning Repository:  
-  [https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption](https://archive.ics.uci.edu/ml/datasets/individual+household+electric+power+consumption)
+This project uses two external data sources:
 
-- **Weather Data:** Retrieved from Meteostat API for **Paris**, including:  
-  - Temperature (°C)  
-  - Relative humidity (%)  
-  - Wind speed (m/s)
+---
 
-All data is merged and processed into `power_hourly_2006_2010.csv` under the `/data` directory.
+### **1. UCI Household Power Consumption Dataset (Auto-Download)**
+
+The script automatically downloads the dataset from the UCI Machine Learning Repository:
+
+Original source:  
+https://archive.ics.uci.edu/ml/machine-learning-databases/00235/
+
+The project automatically performs the following steps:
+
+- Downloads `household_power_consumption.zip` into the `data/` directory  
+- Extracts `household_power_consumption.txt`  
+- Converts and resamples it into hourly data  
+- Saves the processed file as `power_hourly_2006_2010.csv`
+
+**No manual download is required.**
+
+---
+
+### **2. Meteostat Weather API (Auto-Fetch)**
+
+Hourly weather data for **Paris** are retrieved automatically using the `meteostat` API.
+
+The weather dataset includes:
+
+- Temperature (`temp_c`)
+- Relative humidity (`rel_humidity`)
+- Wind speed (`wind_speed`)
+
+The project automatically performs the following steps:
+
+- Fetches hourly weather data (2006–2010) from the Meteostat API  
+- Cleans and standardizes the variables  
+- Saves the processed file as `meteostat_paris_2006_2010.csv` in the `data/` directory  
+- Uses local cache to avoid repeated API calls
+
+**No manual download from Meteostat is required.**
+
+---
+
 
 ---
 
