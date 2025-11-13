@@ -11,7 +11,6 @@ The dataset spans **2006–2010** and is resampled to hourly intervals for consi
 ---
 
 ## 🌍 Data Sources
-## 🌍 Data Sources
 
 This project uses two external data sources:
 
