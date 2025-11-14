@@ -3,13 +3,14 @@ import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
 
-# ARIMA -> SARIMA
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from xgboost import XGBRegressor
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+from config import RESULTS_DIR
 
 
 def evaluate(y_true, y_pred, name):
@@ -25,9 +26,15 @@ def run_models(
     show_hours: int | None = 200,
     save_dir: Path | None = None,
 ):
-    # load data
+    """Train SARIMA, ETS, XGBoost, LSTM and compare."""
+
+    # -------- Load data --------
     train_df = pd.read_csv(train_path, index_col=0, parse_dates=True)
     test_df = pd.read_csv(test_path, index_col=0, parse_dates=True)
+
+    # ⭐⭐⭐ KEY FIX: remove any missing values ⭐⭐⭐
+    train_df = train_df.dropna()
+    test_df = test_df.dropna()
 
     y_train = train_df["load"]
     y_test = test_df["load"]
@@ -38,8 +45,7 @@ def run_models(
     results = {}
     preds = {}
 
-    # -------------------- SARIMA --------------------
-    # 24-hour seasonality; feel free to tune (p,d,q)x(P,D,Q,24)
+    # -------- SARIMA --------
     print("\nTraining SARIMA (2,1,2) x (1,1,1,24)...")
     sarima = SARIMAX(
         y_train,
@@ -52,14 +58,16 @@ def run_models(
     preds["SARIMA"] = pd.Series(np.asarray(y_pred_sarima).ravel(), index=y_test.index)
     results["SARIMA"] = evaluate(y_test, preds["SARIMA"], "SARIMA")
 
-    # --------------------- ETS ---------------------
+    # -------- ETS --------
     print("\nTraining ETS (trend=add, seasonal=add, period=24)...")
-    ets = ExponentialSmoothing(y_train, trend="add", seasonal="add", seasonal_periods=24).fit()
+    ets = ExponentialSmoothing(
+        y_train, trend="add", seasonal="add", seasonal_periods=24
+    ).fit()
     y_pred_ets = ets.forecast(len(y_test))
     preds["ETS"] = pd.Series(np.asarray(y_pred_ets).ravel(), index=y_test.index)
     results["ETS"] = evaluate(y_test, preds["ETS"], "ETS")
 
-    # ------------------- XGBoost -------------------
+    # -------- XGBoost --------
     print("\nTraining XGBoost...")
     X_train, X_test = train_df[feature_cols], test_df[feature_cols]
     xgb = XGBRegressor(
@@ -77,9 +85,9 @@ def run_models(
     preds["XGBoost"] = pd.Series(np.asarray(y_pred_xgb).ravel(), index=y_test.index)
     results["XGBoost"] = evaluate(y_test, preds["XGBoost"], "XGBoost")
 
-    # --------------------- LSTM --------------------
+    # -------- LSTM --------
     print("\nTraining LSTM...")
-    X_train_lstm = np.expand_dims(X_train.values, axis=1)  # [samples, timesteps=1, features]
+    X_train_lstm = np.expand_dims(X_train.values, axis=1)
     X_test_lstm = np.expand_dims(X_test.values, axis=1)
 
     lstm = Sequential([
@@ -94,7 +102,7 @@ def run_models(
     preds["LSTM"] = pd.Series(np.asarray(y_pred_lstm).ravel(), index=y_test.index)
     results["LSTM"] = evaluate(y_test, preds["LSTM"], "LSTM")
 
-    # ----------------- aggregate & save -----------------
+    # -------- Combine & Save --------
     comp = pd.DataFrame(
         {
             "Actual": y_test,
@@ -109,11 +117,13 @@ def run_models(
     if save_dir is not None:
         save_dir.mkdir(parents=True, exist_ok=True)
         comp.to_csv(save_dir / "predictions_test.csv")
-        pd.DataFrame(results, index=["MAE", "RMSE"]).T.to_csv(save_dir / "model_results.csv")
+        pd.DataFrame(results, index=["MAE", "RMSE"]).T.to_csv(
+            save_dir / "model_results.csv"
+        )
         print(f"\nSaved: {save_dir / 'predictions_test.csv'}")
         print(f"Saved: {save_dir / 'model_results.csv'}")
 
-    # --------------------- plotting ---------------------
+    # -------- Plot --------
     if (show_hours is None) or (show_hours >= len(comp)):
         view = comp
         title_suffix = "(full test set)"
@@ -128,7 +138,7 @@ def run_models(
     plt.plot(view.index, view["XGBoost"], label="XGBoost")
     plt.plot(view.index, view["LSTM"], label="LSTM")
     plt.legend()
-    plt.title(f"Load Forecasting: {title_suffix}")
+    plt.title(f"Load Forecasting {title_suffix}")
     plt.tight_layout()
 
     if save_dir is not None:
@@ -140,10 +150,10 @@ def run_models(
 
 
 if __name__ == "__main__":
-    results_dir = Path("../results")
+    results_dir = RESULTS_DIR
     run_models(
         train_path=results_dir / "train_features.csv",
         test_path=results_dir / "test_features.csv",
-        show_hours=200,          # set None for the full test set
-        save_dir=results_dir,    # set None to skip saving files
+        show_hours=200,
+        save_dir=results_dir,
     )
