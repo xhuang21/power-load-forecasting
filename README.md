@@ -67,28 +67,24 @@ The project automatically performs the following steps:
 power-load-forecasting/
 ├power-load-forecasting/
 ├── data/ # Raw and processed datasets ⚠️ ignored by .gitignore
-│ ├── household_power_consumption.txt
-│ ├── meteostat_paris_2006_2010.csv
-│ └── power_hourly_2006_2010.csv
+│ 
 │
-├── doc/ # Documentation and final report
-│ └── final_project_report.pdf
+├── doc/                          # Final report and presentation slides
+│   ├── final_project_report.pdf
+│   └── Final_Project_Presentation.pdf
 │
 ├── results/ # Model results and comparison plots ⚠️ ignored by .gitignore
-│ ├── comparison_plot.png
-│ ├── model_results.csv
-│ ├── predictions_test.csv
-│ ├── test_features.csv
-│ ├── train_features.csv
-│ └── features_full.csv
+│ 
 │
-├── src/ # Source code modules
-│ ├── load.py # Load and preprocess UCI + Meteostat data
-│ ├── process.py # Feature engineering and dataset creation
-│ ├── analyze.py # Model training and evaluation
-│ ├── config.py # Global configuration
-│ ├── main.py # Main execution entry point
-│ └── tests.py # Basic sanity checks (optional)
+├── src/                          # Source code modules
+│   ├── 01_main.py                # Main execution script: loads data, trains models
+│   ├── 02_analyze.py             # Model evaluation and metric computation
+│   ├── 03_plot_results.py        # Generates RMSE/MAE bar charts from results CSV
+│   ├── 04_plot_scatter.py        # Generates scatter plots (Actual vs Predicted)
+│   ├── config.py                 # Global configuration settings
+│   ├── load.py                   # Load & preprocess UCI + Meteostat datasets
+│   ├── process.py                # Feature engineering and dataset preparation
+│   └── tests.py                  # Basic sanity checks (optional)
 │
 │
 ├── .gitignore # Ignore temp files, caches, data/results
@@ -110,39 +106,89 @@ power-load-forecasting/
 
 ---
 
-## 🚀 How to Run
+## 🚀 How to Run the Project
 
-1. **Clone the repository**
+### 1. Clone the repository
+```bash
+git clone <your_repo_url>
+cd <repo_folder>
+```
 
-    ```bash
-    git clone https://github.com/<xhuang21>/power-load-forecasting.git
-    cd power-load-forecasting
-    ```
-
-2. **Install dependencies**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. **Run preprocessing and feature generation**
-
-    ```bash
-    python src/01_main.py
-    ```
-
-4. **Train and evaluate all models**
-
-    ```bash
-    python src/02_analyze.py
-    ```
-
-5. **Check results**
-
-    - Model metrics → `results/model_results.csv`  
-    - Forecast comparison plot → `results/comparison_plot.png`
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
 ---
+
+## 3. Run preprocessing & feature generation  
+This step loads raw UCI + Meteostat data and produces merged hourly datasets and model-ready features.
+
+```bash
+python src/01_main.py
+```
+
+Output (stored in `results/`):
+- `train_features.csv`
+- `test_features.csv`
+
+---
+
+## 4. Train and evaluate all models  
+This script trains SARIMA, ETS, XGBoost, and LSTM, and produces 200-hour predictions + metrics.
+
+```bash
+python src/02_analyze.py
+```
+
+Output (stored in `results/`):
+- `model_results.csv`  
+- `predictions_test.csv`
+
+---
+
+## 5. Generate model performance bar chart (MAE & RMSE)
+
+```bash
+python src/03_plot_results.py
+```
+
+Output saved to:
+
+```
+results/model_error_bar_200h.png
+```
+
+---
+
+## 6. Generate individual scatter plots (Actual vs Predicted) for all 4 models  
+This script creates four separate scatter plots based on the first 200 hours.
+
+```bash
+python src/04_plot_scatter.py
+```
+
+Outputs saved to:
+
+```
+results/scatter_sarima.png
+results/scatter_ets.png
+results/scatter_xgboost.png
+results/scatter_lstm.png
+```
+
+---
+
+## ✔ All results are saved under:
+
+```
+results/
+```
+
+No data is uploaded to GitHub (per course rules).  
+All plots and metrics are generated automatically by running the above scripts.
+
+
 
 ## 📊 Key Insights
 
